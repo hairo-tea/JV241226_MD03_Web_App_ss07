@@ -41,7 +41,7 @@ public class CategoryController {
             model.addAttribute("error", "Category already exist");
             return "addCategory";
         }
-        categoryService.save(category);
+        categoryService.insert(category);
         redirectAttributes.addFlashAttribute("message", "Category added successfully");
         return "redirect:/categories";
     }
@@ -52,8 +52,7 @@ public class CategoryController {
     }
     @GetMapping("/edit/{id}")
     public String showEditCategory(@PathVariable("id") Long id, Model model) {
-        Optional<Category> category = categoryService.findById(id);
-        model.addAttribute("category", category.get());
+        model.addAttribute("category", categoryService.findById(id));
         return "editCategory";
     }
     @PostMapping("/edit/{id}")
@@ -62,25 +61,19 @@ public class CategoryController {
                                    Model model,
                                    RedirectAttributes redirectAttributes) {
         // Lấy danh mục hiện tại trong DB
-       Optional<Category> existingCategory = categoryService.findById(id);
+       Category existingCategory = categoryService.findById(id);
 
-       //nếu không tìm thấy
-       if(!existingCategory.isPresent()) {
-           redirectAttributes.addFlashAttribute("error", "Category not found");
-           return "redirect:/categories";
+       if(categoryService.isExistName(existingCategory.getCateName()) && !category.getCateId().equals(id)) {
+           model.addAttribute("error", "Category already exist");
+           return "editCategory";
+       } else if (categoryService.isExistName(category.getCateName()) && !existingCategory.getCateName().equals(category.getCateName())) {
+           model.addAttribute("category", category);
+           model.addAttribute("error", "Category already exist");
+           return "editCategory";
        }
-       Category updatedCategory = existingCategory.get();
-        // Nếu người dùng đổi tên danh mục => kiểm tra tên mới đã tồn tại chưa
-        if(!updatedCategory.getCateName().trim().equals(category.getCateName())
-        && categoryService.isExistName(category.getCateName().trim())) {
-            //Tên mới đã tồn tại
-            model.addAttribute("category", category );
-            model.addAttribute("error", "Category name already exist");
-            return "editCategory";
-        }
-       // Gán lại ID, cập nhật thành công
+        // Gán lại ID, cập nhật thành công
        category.setCateId(id);
-       categoryService.save(category);
+       categoryService.update(category);
        redirectAttributes.addFlashAttribute("message", "Category updated successfully");
        return "redirect:/categories";
     }

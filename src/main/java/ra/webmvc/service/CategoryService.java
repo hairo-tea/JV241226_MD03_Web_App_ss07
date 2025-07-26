@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ra.webmvc.entity.Category;
 import ra.webmvc.repository.CategoryRepository;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,20 +18,23 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
     //lấy theo id
-    public Optional<Category> findById(Long id){
+    public Category findById(Long id){
         return categoryRepository.findById(id);
     }
     //kiểm tra trùng tên
     public boolean isExistName(String name){
-        return categoryRepository.findByCateName(name).isPresent();
+        return categoryRepository.isNameExist(name);
     }
-
-    //Thêm hoặc cập nhật
-    public void save(Category category){
-       categoryRepository.save(category);
+    //Thêm
+    public void insert(Category category){
+       categoryRepository.insert(category);
+    }
+    //cập nhật
+    public void update(Category category){
+        categoryRepository.update(category);
     }
     //xóa theo id
     public void delete(Long id){
-        categoryRepository.deleteById(id);
+        categoryRepository.delete(id);
     }
 }

@@ -12,7 +12,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-public class gitRootConfig {
+public class RootConfig {
   @Bean
   public DataSource dataSource() {
     DriverManagerDataSource dataSource = new DriverManagerDataSource();
